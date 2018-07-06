@@ -5,12 +5,12 @@ A little project in C# which simulate a train station.
 
 This is a little project that I have to do during my study.\
 I develop a little simulator of a train station with two tracks.\
-I use multhitread to develop my app.<br\>
+I use multhitread to develop my app.\
 
 ## How to launch the project
 
-Open the .sln project in visual studio. compile it and run it.<br\>
-You have the documentation in the LaTeX directory which explain how the solution project work.<br\>
+Open the .sln project in visual studio. compile it and run it.\
+You have the documentation in the LaTeX directory which explain how the solution project work.\
 
 
 ## Contact
