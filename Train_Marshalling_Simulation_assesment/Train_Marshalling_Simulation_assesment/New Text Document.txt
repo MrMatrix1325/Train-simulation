@@ -1,0 +1,314 @@
+            go = false;
+            int j = 0;
+            ok = true;
+            if (!isswitch)
+            {
+                dest = train.get_dest ;
+                if (dest == 3)
+                {
+                    signals[8].get_pb.Image = Properties.Resources.Yellow_carrée;
+                    signals[8].set_signal = 2;
+                    signals[10].get_pb.Image = Properties.Resources.f_vert;
+                    signals[10].set_signal = 5;
+                    signals[11].get_pb.Image = Properties.Resources.signal_vert;
+                    signals[11].set_signal = 5;
+                }
+                else if (dest == 4)
+                {
+                    signals[8].get_pb.Image = Properties.Resources.vert_carrée;
+                    signals[8].set_signal = 5;
+                    signals[9].get_pb.Image = Properties.Resources.fjaune;
+                    signals[9].set_signal = 2;
+                    signals[11].get_pb.Image = Properties.Resources.signal_vert;
+                    signals[11].set_signal = 5;
+                }
+                else
+                {
+                    signals[8].get_pb.Image = Properties.Resources.vert_carrée;
+                    signals[8].set_signal = 5;
+                    signals[9].get_pb.Image = Properties.Resources.f_vert;
+                    signals[9].set_signal = 5;
+                    signals[10].get_pb.Image = Properties.Resources.f_vert;
+                    signals[10].set_signal = 5;
+                    signals[11].get_pb.Image = Properties.Resources.Ralentissement;
+                    signals[11].set_signal = 4;
+                    if (signals[15].get_signal == 1)
+                    {
+                        signals[11].get_pb.Image = Properties.Resources.Jaune_combiné;
+                        signals[11].set_signal = 3;
+                    }
+                }
+                motorcycle.BackColor = Color.Pink;
+                Safepan(motorcycle, true);
+                setback(this.motorcycle);
+                for (int k = 0; k < 8; k++)
+                    setback(this.black[k]);
+                Modify(motorcycle, new Point(1300, 373));
+                Safepan(motorcycle, true);
+                while (motorcycle.Location.X - 20 > 900)
+                {
+                    Modify(motorcycle, new Point(motorcycle.Location.X - 20, 373));
+                    System.Threading.Thread.Sleep(100);
+                }
+                Modify(motorcycle, new Point(900, 373));
+                System.Threading.Thread.Sleep(100);
+            }
+            while (youcan|| isswitch || turnone)
+            {
+            loop:
+                youcan = false;
+                if (isswitch)
+                {
+                    isswitch = false;
+                    goto here;
+                }
+                signals[8].get_pb.Image = Properties.Resources.semaphore_carrée;
+                signals[8].set_signal = 1;
+                Modify(motorcycle, new Point(900, 373));
+                j = 1;
+                while (motorcycle.Location.X - 20 > 290)
+                {
+                    Modify(motorcycle, new Point(motorcycle.Location.X - 20, 373));
+                    if (j - 1 < train.get_carts)
+                    {
+                        Modify(train.get_cars[j - 1], new Point(900, 373));
+                        for (int i = 0; i < train.get_carts - (train.get_carts - j + 1); ++i)
+                            Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X - 20, 373));
+                        for (int i = train.get_carts - 1; i >= j; --i)
+                            Modify(train.get_cars[i], new Point(900, train.get_cars[i].Location.Y + 20));
+                    }
+                    else
+                    {
+                        for (int i = 0; i < train.get_carts; ++i)
+                            Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X - 20, 373));
+                    }
+                    if (motorcycle.Location.X - 20 <= 697 && dest == 3 && ok)
+                    {
+                        ok = false;
+                        Modify(motorcycle, new Point(697 - 20 * train.get_carts, 373));
+                        signals[13].get_pb.Image = Properties.Resources.white;
+                        signals[13].set_signal = 7;
+                        for (int i = 0; i < train.get_carts; ++i)
+                            Modify(train.get_cars[i], new Point(717 - 20 * (train.get_carts - i), 373));
+                        clearlance(3);
+                        signals[13].get_pb.Image = Properties.Resources.purple;
+                        signals[13].set_signal = 6;
+                        signals[9].get_pb.Image = Properties.Resources.f_vert;
+                        signals[9].set_signal = 5;
+                        j = train.get_carts;
+                    }
+                    if (motorcycle.Location.X - 20 <= 630)
+                    {
+                        signals[9].get_pb.Image = Properties.Resources.fsemaphore;
+                        signals[9].set_signal = 1;
+                    }
+                    if (motorcycle.Location.X - 20 <= 527 && dest == 4 && ok)
+                    {
+                        ok = false;
+                        Modify(motorcycle, new Point(527 - 20 * train.get_carts, 373));
+                        for (int i = 0; i < train.get_carts; ++i)
+                            Modify(train.get_cars[i], new Point(547 - 20 * (train.get_carts - i), 373));
+                        signals[14].get_pb.Image = Properties.Resources.white;
+                        signals[14].set_signal = 7;
+                        clearlance(4);
+                        signals[14].get_pb.Image = Properties.Resources.purple;
+                        signals[14].set_signal = 6;
+                        signals[10].get_pb.Image = Properties.Resources.f_vert;
+                        signals[10].set_signal = 5;
+                        j = train.get_carts;
+                    }
+                    if (motorcycle.Location.X - 20 <= 440)
+                    {
+                        signals[10].get_pb.Image = Properties.Resources.fsemaphore;
+                        signals[10].set_signal = 1;
+                    }
+                    j++;
+                    System.Threading.Thread.Sleep(100);
+                }
+                Modify(motorcycle, new Point(290, 373));
+                System.Threading.Thread.Sleep(100);
+            here:
+                j = 1;
+                while (motorcycle.Location.Y - 20 > 135)
+                {
+                    Modify(motorcycle, new Point(290, motorcycle.Location.Y - 20));
+                    if (j - 1 < train.get_carts)
+                    {
+                        Modify(train.get_cars[j - 1], new Point(290, 373));
+                        for (int i = 0; i < train.get_carts - (train.get_carts - j + 1); ++i)
+                            Modify(train.get_cars[i], new Point(290, train.get_cars[i].Location.Y - 20));
+                        for (int i = train.get_carts - 1; i >= j; --i)
+                            Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X - 20, 373));
+                    }
+                    else
+                    {
+                        for (int i = 0; i < train.get_carts; ++i)
+                            Modify(train.get_cars[i], new Point(290, train.get_cars[i].Location.Y - 20));
+                    }
+                    System.Threading.Thread.Sleep(100);
+                    j++;
+                }
+                signals[11].get_pb.Image = Properties.Resources.signal_carree;
+                signals[11].set_signal = 0;
+                Modify(motorcycle, new Point(290, 133));
+                System.Threading.Thread.Sleep(100);
+                j = 1;
+                while (motorcycle.Location.X + 20 < 907)
+                {
+                    Modify(motorcycle, new Point(motorcycle.Location.X + 20, 133));
+                    if (j - 1 < train.get_carts)
+                    {
+                        Modify(train.get_cars[j - 1], new Point(290, 133));
+                        for (int i = 0; i < train.get_carts - (train.get_carts - j + 1); ++i)
+                            Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X + 20, 133));
+                        for (int i = train.get_carts - 1; i >= j; --i)
+                            Modify(train.get_cars[i], new Point(290, train.get_cars[i].Location.Y - 20));
+                    }
+                    else
+                    {
+                        for (int i = 0; i < train.get_carts; ++i)
+                            Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X + 20, 133));
+                    }
+                    System.Threading.Thread.Sleep(100);
+                    j++;
+                }
+                Modify(motorcycle, new Point(905, 133));
+                for (int i = 0; i < train.get_carts; ++i)
+                    Modify(train.get_cars[i], new Point(885 - i * 20, 133));
+                System.Threading.Thread.Sleep(100);
+                if (dest == 1 || dest == 2)
+                {
+                    semaphore.Signal();
+                    signals[7].get_pb.Image = Properties.Resources.nfgreen;
+                    signals[7].set_signal = 5;
+                    signals[3].get_pb.Image = Properties.Resources.Ralentissement;
+                    signals[3].set_signal = 4;
+                    aig = false;
+                    switching();
+                    goto end;
+                }
+                if (!turnone && train.get_queue.Count != 0 && !aig)
+                {
+                    go = true;
+                    dest = train.get_dest;
+                    youcan = true;
+                        if (dest == 3 && go)
+                        {
+                            signals[12].get_pb.Image = Properties.Resources.Jaune_combiné;
+                            signals[12].set_signal = 3;
+                            signals[10].get_pb.Image = Properties.Resources.f_vert;
+                            signals[10].set_signal = 5;
+                            signals[11].get_pb.Image = Properties.Resources.signal_vert;
+                            signals[11].set_signal = 5;
+                        }
+                        if (dest == 4 && go)
+                        {
+                            signals[12].get_pb.Image = Properties.Resources.Ralentissement;
+                            signals[12].set_signal = 4;
+                            signals[9].get_pb.Image = Properties.Resources.fjaune;
+                            signals[9].set_signal = 2;
+                            signals[11].get_pb.Image = Properties.Resources.signal_vert;
+                            signals[11].set_signal = 5;
+                        }
+                        if ((dest == 1 || dest == 2) && go)
+                        {
+                            aig = true;
+                            signals[12].get_pb.Image = Properties.Resources.Ralentissement;
+                            signals[12].set_signal = 4;
+                            signals[8].get_pb.Image = Properties.Resources.vert_carrée;
+                            signals[8].set_signal = 5;
+                            signals[9].get_pb.Image = Properties.Resources.f_vert;
+                            signals[9].set_signal = 5;
+                            signals[10].get_pb.Image = Properties.Resources.f_vert;
+                            signals[10].set_signal = 5;
+                            signals[11].get_pb.Image = Properties.Resources.Ralentissement;
+                            signals[11].set_signal = 4;
+                            if (signals[15].get_signal == 1)
+                            {
+                                signals[11].get_pb.Image = Properties.Resources.Jaune_combiné;
+                                signals[11].set_signal = 3;
+                            }
+                        }
+                    }
+
+                else
+                {
+                    signals[12].get_pb.Image = Properties.Resources.signal_vert;
+                    signals[12].set_signal = 5;
+                }
+                go = false;
+                j = 1;
+                while (motorcycle.Location.Y + 20 < 373)
+                {
+                    Modify(motorcycle, new Point(905, motorcycle.Location.Y + 20));
+                    if (j - 1 < train.get_carts)
+                    {
+                        Modify(train.get_cars[j - 1], new Point(905, 133));
+                        for (int i = 0; i < train.get_carts - (train.get_carts - j + 1); ++i)
+                            Modify(train.get_cars[i], new Point(905, train.get_cars[i].Location.Y + 20));
+                        for (int i = train.get_carts - 1; i >= j; --i)
+                            Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X + 20, 133));
+                    }
+                    else
+                    {
+                        for (int i = 0; i < train.get_carts; ++i)
+                            Modify(train.get_cars[i], new Point(905, train.get_cars[i].Location.Y + 20));
+                    }
+                    if (motorcycle.Location.Y >= 200)
+                    {
+                        signals[12].get_pb.Image = Properties.Resources.signal_carree;
+                        signals[12].set_signal = 0;
+                    }
+                    System.Threading.Thread.Sleep(100);
+                    j++;
+                }
+                ok = true;
+                Modify(motorcycle, new Point(905, 373));
+                System.Threading.Thread.Sleep(100);
+                if (turnone)
+                {
+                    turnone = false; 
+                    goto loop;
+                }
+            }
+            j = 1;
+            SetBring(black[8]);
+            setback(motorcycle);
+            for (int i = 0; i < train.get_carts; ++i)
+                setback(train.get_cars[i]);
+            setback(black[0]);
+            setback(black[1]);
+            setback(black[4]);
+            while (motorcycle.Location.X + 20 < 1300)
+            {
+                Modify(motorcycle, new Point(motorcycle.Location.X + 20, 373));
+                if (j - 1 < train.get_carts)
+                {
+                    Modify(train.get_cars[j - 1], new Point(905, 373));
+                    for (int i = 0; i < train.get_carts - (train.get_carts - j + 1); ++i)
+                        Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X + 20, 373));
+                    for (int i = train.get_carts - 1; i >= j; --i)
+                        Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X + 20, 373));
+                }
+                else
+                {
+                    for (int i = 0; i < train.get_carts; ++i)
+                        Modify(train.get_cars[i], new Point(train.get_cars[i].Location.X + 20, 373));
+                }
+                System.Threading.Thread.Sleep(100);
+                j++;
+            }
+            for (int i = 0; i < train.get_carts; ++i)
+                Modify(train.get_cars[i], new Point(1300, 373));
+            for (int i = 0; i < train.get_carts; ++i)
+                Safepan(train.get_cars[i], false);
+            Safepan(motorcycle, false);
+            SetBring(black[8]);
+            semaphore.Signal();
+            signals[7].get_pb.Image = Properties.Resources.nfgreen;
+            signals[7].set_signal = 5;
+            signals[3].get_pb.Image = Properties.Resources.Ralentissement;
+            signals[3].set_signal = 4;
+        end:
+            Safepan(motorcycle, false);
+            freecars();

@@ -1,0 +1,263 @@
+\documentclass[12pt]{article}
+
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
+\lstset{style=sharpc}
+
+\geometry{hmargin=2.5cm,vmargin=3cm}
+
+\pagestyle{fancy}
+
+\setlength{\parindent}{1cm}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+\rfoot{Staffordshire University}
+\rhead{Concurrent programming in C\#}
+\lhead{Charles GINANE}
+\lfoot{Train Marshalling simulation}
+  \begin{titlepage}
+  \centering
+      {\LARGE \textsc{Stafforshire university}}\\
+      \textsc{Concurrent programming in C\#}\\
+    \vspace{1cm}
+    \vspace{1cm}
+    \includegraphics[scale=0.5]{title.jpg}
+    \vfill
+       {\LARGE \textbf{ Train Marshalling Simulation}} \\
+    \vspace{2em}
+    \vfill
+  \end{titlepage}
+
+\tableofcontents
+
+\newpage
+
+\section{Design}
+
+\quad
+
+The design of application is simple. Let see the figure 2.1 which is a screen of the application when you launch it.
+
+\quad
+\begin{center}
+
+\includegraphics[scale=0.5]{Capture.PNG}
+
+\quad
+
+\textit{\underline{Figure 2.1 :} Screen of application}
+\end{center}
+
+\underline{Legend :}
+
+\quad
+
+1 - First circuit (Blue) 
+
+2 - Second circuit (Black) 
+
+3 - Begin of first circuit
+
+4 - Begin of second circuit
+
+5 - Selection of cars and speed for the black train
+
+6 - Selection of cars and speed for the blue train
+
+7 - Button which prepare the simulation 
+
+8 - Button which launch the simulation	
+
+9 - Signal light
+
+10 - the garage where are the cars
+
+\newpage 
+
+For the background, I have chosen a pictures of a TGV (a french high speed train) because it a symbol of speed and of train.\\
+Blue and black panels represents the beginning of the two circuit. The two circuit are in different colors (Brown and darkorange) to differenciate them. The color of panel at this end represents the four cars which train can take. I have given a number for user select them before launching the simulation.
+The green and lightgreen panel represents switching between the two circuit.\\
+The working of my application is simple. User enter the car and the speed of each train. When it's ok, he click on the button "rearming" and "GO".\\
+Moreover, to have a very good simulation. I have put some signals light. I have used the french signalisation lighting because it's an interesting signalisation for our simulation.If the user has a doubt on the signification of a signal, he can click on this signal and a new window appaears with the signification of all light signals (example figure 2.2 with the 6 light signals).\\
+\begin{center}
+
+\includegraphics[scale=0.6]{example2.PNG}
+
+\quad
+
+\textit{\underline{Figure 2.2 :} 6 light signal window}
+\end{center}
+
+\newpage
+
+\section{My strategy}
+
+\quad
+
+My strategy to solve our problem is very simple. I use two threads which match with the two circuit (The orange circuit and the brown circuit).
+To know all of destination of a train, I have used a queue which I have filled the cars which the train must take. The maximum of cars that a train can be take has been set to 5.
+Moreover, I have filled in the thread constructor the two circuit. With that, the train can change of circuit without change a thread.\\
+
+To change the circuit. I use the class "semaphore.cs". when a train want to go on the other circuit. I use "semaphore.wait" to wait the thread to avoid collision between two trains. The thread waiting on the switching panel. When the other train leave the circuit or it was on the switching panel, it calls "semaphore.pulse" and the thread resume.
+Moreover, I use the design to help me. When the train leave the circuit, I turn on the signal on switching (signal light red pass to green) and if the switching signal is green, the train doesn't stop at this signal because it has no train on the other circuit.\\
+
+
+\newpage
+
+\section{My code C\#}
+
+For this project, I used 4 C\# class.
+
+\subsection{circuit.cs}
+
+\underline{The constructor}
+
+\begin{lstlisting}[frame=single]
+public Circuit(Panel _current, bool road, Train train, 
+		   Panel[] blues, Panel[] blacks, 
+		   Tuple<Panel, int>[,] _cars, Signal[] _signals,
+		   Semaphore _semaphore, Panel _other)
+
+\end{lstlisting}
+
+\quad
+
+
+\_current   : this is the panel which represents the train
+
+road 	    : Boolean which control is the road is the road blue (true) or is the black road (false)
+
+train	    : This is the class train
+
+blues	    : Array of blue panels
+
+blacks	    : Array of black panels
+
+\_cars	    : Array of tuple which represents
+
+\_signals   : Array of all signals of those circuit
+
+\_semaphore : The semaphore between the two threads 
+
+\_other	    : The other panel which controls the other train
+
+\quad
+
+\underline{Main functions :}
+
+\quad
+
+\begin{lstlisting}[frame=single]
+public void start()
+\end{lstlisting}
+
+This is the starting function which launch the thread. This function call the function blue\_road() or black\_road() in function of the boolean roadblue. \\  
+
+\begin{lstlisting}[frame=single]
+private void blue_road()
+\end{lstlisting}
+
+This function moves the panel on the blue circuit.\\
+
+\begin{lstlisting}[frame=single]
+private void black_road()
+\end{lstlisting}
+
+This function moves the panel on the black circuit.\\
+
+\begin{lstlisting}[frame=single]
+private void freecars()
+\end{lstlisting}
+
+This function is call when the train have finished is travel and he replaced all cars of this train.\\
+
+\begin{lstlisting}[frame=single]
+private void clearlance(int way)
+\end{lstlisting}
+
+This function the panel which represents the car (in function of the value of way between 1 to 4) and it coupling at the train.\\
+
+\begin{lstlisting}[frame=single]
+private void switching()
+\end{lstlisting}
+
+Switch circuit of the train\\
+
+\subsection{train.cs}
+
+\underline{The constructor}
+
+\begin{lstlisting}[frame=single]
+public Train(int _cars , string _name, int _number , 
+	     Queue<int> _stops, int velocity)
+
+\end{lstlisting}
+
+\_cars		: The number of cars
+
+\_name		: Name of the train
+
+\_number 	: Number of the train
+
+\_stops		: Queue which contains the cars which trains must take
+
+velocity	: Speed of the train
+
+\quad
+
+In this class, the important point was the variables because I used a lot of getters and setters for this class.\\
+
+\begin{lstlisting}[frame=single]
+private int cars;
+private int carts;
+private string name;
+private Queue<int> stops;
+private Panel[] panelcars = new Panel[6];
+private int speed;
+private int number;
+\end{lstlisting}
+
+\quad
+
+cars		: Number of cars when the constructor is call
+
+carts		: Numbers of cars on this train
+
+stops		: Queue which contains the cars
+
+panlescars  : Array which have the cars in the train
+
+speed		: Speed of the train
+
+\quad
+
+As we can see, the variables carts and stops are very important because I used them with getters and setters like that.\\
+
+\begin{lstlisting}[frame=single]
+public int get_dest
+{
+	get { return stops.Dequeue(); }
+}
+
+public int get_carts
+{
+	get { return carts; }
+}
+
+public int add_carts
+{
+	set { carts += value; }
+}
+\end{lstlisting}
+
+\subsection{signal.cs}
+
+\subsection{semaphore.cs}
+
+\end{document}
