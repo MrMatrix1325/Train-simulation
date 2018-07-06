@@ -3,8 +3,8 @@ A little project in C# which simulate a train station.
 
 ## Brief
 
-This is a little project that I have to do during my study.<br\>
-I develop a little simulator of a train station with two tracks.<br\>
+This is a little project that I have to do during my study.\
+I develop a little simulator of a train station with two tracks.\
 I use multhitread to develop my app.<br\>
 
 ## How to launch the project
